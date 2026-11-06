@@ -1,0 +1,5 @@
+aws_region    = "us-east-1"
+instance_type = "t3.micro"
+instance_name = "prashant-ec2-maven"
+key_name      = "06-11-2026"
+admin_cidr    = "122.162.150.124"/32"
