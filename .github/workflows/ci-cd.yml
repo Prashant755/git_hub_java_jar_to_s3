@@ -1,89 +1,89 @@
 
-name: github-java-s3-deploy
-
-on:
-  workflow_dispatch:
-
-# Required permissions for OIDC
-permissions:
-  id-token: write
-  contents: read
-
-jobs:
-  aws-oidc:
-    name: Connect GitHub to AWS
-    runs-on: ubuntu-latest
-
-    steps:
-
-      # Step 1: Checkout repository
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      # Step 2: Configure AWS credentials using OIDC
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6.3.0
-        with:
-          role-to-assume: arn:aws:iam::381491944081:role/ec2-OIDC
-          aws-region: us-east-1
-          role-session-name: GitHubActionsSession
-
-      # Step 3: Verify AWS authentication
-      - name: Verify AWS Identity
-        run: |
-          aws sts get-caller-identity
-
-      # Step 4: Verify EC2 access
-      - name: List EC2 Instances
-        run: |
-          aws ec2 describe-instances \
-            --region us-east-1
-
-      # Step 5: Setup Terraform
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      # Step 6: Terraform Init
-      - name: Terraform Init
-        run: terraform init
-
-      # Step 7: Terraform Plan
-      - name: Terraform Plan
-        run: terraform plan
-
-      # Step 8: Terraform Apply
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-
-
-# name: Terraform Destroy
+# name: github-java-s3-deploy
 
 # on:
 #   workflow_dispatch:
 
+# # Required permissions for OIDC
 # permissions:
 #   id-token: write
 #   contents: read
 
 # jobs:
-#   destroy:
+#   aws-oidc:
+#     name: Connect GitHub to AWS
 #     runs-on: ubuntu-latest
 
 #     steps:
+
+#       # Step 1: Checkout repository
 #       - name: Checkout Code
 #         uses: actions/checkout@v4
 
+#       # Step 2: Configure AWS credentials using OIDC
 #       - name: Configure AWS Credentials
 #         uses: aws-actions/configure-aws-credentials@v6.3.0
 #         with:
 #           role-to-assume: arn:aws:iam::381491944081:role/ec2-OIDC
 #           aws-region: us-east-1
+#           role-session-name: GitHubActionsSession
 
+#       # Step 3: Verify AWS authentication
+#       - name: Verify AWS Identity
+#         run: |
+#           aws sts get-caller-identity
+
+#       # Step 4: Verify EC2 access
+#       - name: List EC2 Instances
+#         run: |
+#           aws ec2 describe-instances \
+#             --region us-east-1
+
+#       # Step 5: Setup Terraform
 #       - name: Setup Terraform
 #         uses: hashicorp/setup-terraform@v3
 
+#       # Step 6: Terraform Init
 #       - name: Terraform Init
 #         run: terraform init
 
-#       - name: Terraform Destroy
-#         run: terraform destroy -auto-approve
+#       # Step 7: Terraform Plan
+#       - name: Terraform Plan
+#         run: terraform plan
+
+#       # Step 8: Terraform Apply
+#       - name: Terraform Apply
+#         run: terraform apply -auto-approve
+
+
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::381491944081:role/ec2-OIDC
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
